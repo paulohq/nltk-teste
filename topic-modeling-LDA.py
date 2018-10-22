@@ -104,7 +104,7 @@ lda_model = gensim.models.LdaMulticore(bow_corpus, num_topics=10, id2word=dictio
 from gensim.test.utils import datapath
 # Save model to disk.
 temp_file = datapath("model")
-lda.save(temp_file)
+lda_model.save(temp_file)
 
 # Load a potentially pretrained model from disk.
 #lda = LdaModel.load(temp_file)
@@ -112,3 +112,31 @@ lda.save(temp_file)
 #For each topic, we will explore the words occuring in that topic and its relative weight.
 for idx, topic in lda_model.print_topics(-1):
     print('Topic: {} \nWords: {}'.format(idx, topic))
+
+
+#Running LDA using TF-IDF
+lda_model_tfidf = gensim.models.LdaMulticore(corpus_tfidf, num_topics=10, id2word=dictionary, passes=2, workers=4)
+
+for idx, topic in lda_model_tfidf.print_topics(-1):
+    print('Topic: {} Word: {}'.format(idx, topic))
+
+#Performance evaluation by classifying sample document using LDA Bag of Words model
+#We will check where our test document would be classified.
+processed_docs[4310]
+for index, score in sorted(lda_model[bow_corpus[4310]], key=lambda tup: -1*tup[1]):
+    print("\nScore: {}\t \nTopic: {}".format(score, lda_model.print_topic(index, 10)))
+
+#Our test document has the highest probability to be part of the topic that our model assigned, which is the accurate classification.
+
+#Performance evaluation by classifying sample document using LDA TF-IDF model.
+for index, score in sorted(lda_model_tfidf[bow_corpus[4310]], key=lambda tup: -1*tup[1]):
+    print("\nScore: {}\t \nTopic: {}".format(score, lda_model_tfidf.print_topic(index, 10)))
+
+#Our test document has the highest probability to be part of the topic that our model assigned, which is the accurate classification.
+
+#Testing model on unseen document
+unseen_document = 'How a Pentagon deal became an identity crisis for Google'
+bow_vector = dictionary.doc2bow(preprocess(unseen_document))
+
+for index, score in sorted(lda_model[bow_vector], key=lambda tup: -1*tup[1]):
+    print("Score: {}\t Topic: {}".format(score, lda_model.print_topic(index, 5)))
