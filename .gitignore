@@ -1,0 +1,13 @@
+*.zip
+*.pdf
+*.xml
+arquivos/*
+.idea/*
+.idea
+cmake-build-debug
+*.out
+*.o
+virtualenv/*
+.venv-python3.6/*
+stanford*/*
+abcnews*.csv
